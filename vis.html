@@ -1,0 +1,242 @@
+<script>
+    var currentTurn = 0;
+    var takahashiX = 0;
+    var takahashiY = 0;
+    var aokiX = 1;
+    var aokiY = 0;
+    var n = 5
+    var operationLines = "";
+    var gridLines = ""
+    var grid = NaN;
+    var verticalWall = NaN;
+    var horizontalWall = NaN;
+    
+    function loadGrid(){
+        // グリッドの値を取得
+        board = document.getElementById("board").value;
+        gridLines = board.split("\n");
+        n = Math.floor(gridLines.length / 3);
+
+        // n * n マスのグリッドを作成
+        grid = new Array(n);
+        for(var i = 0; i < n; i++){
+            grid[i] = new Array(n);
+            for(var j = 0; j < n; j++){
+                grid[i][j] = 0;
+            }
+        }
+        
+        for(var i = 2 * n; i < 3 * n; i++){
+            for(var j = 0; j < n; j++){
+
+                var gridLine = gridLines[i].split(" ");
+                grid[i - 2 * n][j] = parseInt(gridLine[j]);
+            }
+        }
+
+        // 壁を取得(壁あり:1)
+        verticalWall = new Array(n - 1);
+        for(var i = 0; i < n - 1; i++){
+            verticalWall[i] = new Array(n);
+            var verticalWallLine = gridLines[i + 1]
+            for(var j = 0; j < n; j++){
+                verticalWall[i][j] = parseInt(verticalWallLine[j])
+            }
+        }
+
+        // 壁を取得(壁あり:1)
+        horizontalWall = new Array(n);
+        for(var i = 0; i < n; i++){
+            horizontalWall[i] = new Array(n - 1);
+            var horizontalWallLine = gridLines[i + n + 2]
+            for(var j = 0; j < n - 1; j++){
+                horizontalWall[i][j] = parseInt(horizontalWallLine[j])
+            }
+        }
+
+        document.getElementById("nValue").innerHTML = String(n)
+
+    }
+
+    function loadOperation(){
+        operationLines = document.getElementById("operation").value;
+        currentTurn = 0;
+        setInitialPosition(operationLines.split("\n")[0]);
+        document.getElementById("turnValue").value = "0";
+        visualize();
+    }
+
+    function setInitialPosition(command){
+        console.log(command);
+        commandList = command.split(" ");
+        takahashiX = parseInt(commandList[0]);
+        takahashiY = parseInt(commandList[1]);
+        aokiX = parseInt(commandList[2]);
+        aokiY = parseInt(commandList[3]);        
+    }
+
+    function drawRect(ctx, n, x, y, text, color){
+        ctx.fillStyle = color || "black";
+        ctx.beginPath();
+        ctx.fillRect(x * (500 / n), y * (500 / n), (500 / n) * 0.9, (500 / n) * 0.9);
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.font = (500 / n) * 0.3 + 'px Roboto medium';
+        ctx.fillStyle = 'black';
+        ctx.fillText(text, x * (500 / n) + (500 / n) * 0.3, y * (500 / n) + (500 / n / 2));
+        ctx.closePath();
+    }
+
+    function drawVerticalWall(ctx, n, x, y){
+        ctx.fillStyle = "brown";
+        ctx.beginPath();
+        ctx.fillRect((x + 1) * (500 / n) - (500 / n) * 0.1, y * (500 / n), (500 / n) * 0.1, (500 / n));
+        ctx.closePath();
+    }
+
+    function drawHorizontalWall(ctx, n, x, y){
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.fillRect(x * (500 / n), (y + 1) * (500 / n) - (500 / n) * 0.1, (500 / n), (500 / n) * 0.1);
+        ctx.closePath();
+    }
+
+    function changeTurn(){
+        // 遷移先ターンを読み込み
+        targetTurn = document.getElementById("turnValue").value;
+
+        // ターンを初期化
+        currentTurn = 0;
+        setInitialPosition(operationLines.split("\n")[0]);
+
+        // 盤面を読み込み
+        loadGrid();
+
+        // 0ターン目からシミュレート
+        for(var t = 0; t < targetTurn; t++){
+            incrementTurn();
+        }
+        visualize();
+    }
+
+    function incrementTurnAndVisualize(){
+        incrementTurn();
+        visualize();
+    }
+
+    function incrementTurn(){
+        console.log(takahashiX, takahashiY);
+        console.log(currentTurn);
+        console.log(operationLines);
+        currentTurn += 1;
+        document.getElementById("turnValue").value = currentTurn;
+
+        var operationLine = operationLines.split('\n')[currentTurn];
+        var line = operationLine.split(" ");
+
+        var direction = line[0];
+        if(direction == "1"){
+            // swap
+            w = grid[takahashiX][takahashiY];
+            grid[takahashiX][takahashiY] = grid[aokiX][aokiY];
+            grid[aokiX][aokiY] = w;
+        }
+
+        var takahashiMove = line[1];
+        if(takahashiMove == "U"){
+            takahashiY -= 1;
+        }else if(takahashiMove == "D"){
+            takahashiY += 1;
+        }else if(takahashiMove == "L"){
+            takahashiX -= 1;
+        }else if(takahashiMove == "R"){
+            takahashiX += 1;
+        }
+
+        var aokiMove = line[2];
+        if(aokiMove == "U"){
+            aokiY -= 1;
+        }else if(aokiMove == "D"){
+            aokiY += 1;
+        }else if(aokiMove == "L"){
+            aokiX -= 1;
+        }else if(aokiMove == "R"){
+            aokiX += 1;
+        }
+
+        console.log(operationLine);
+        console.log(takahashiX, takahashiY);
+
+    }
+
+    function visualize(){
+        context = document.getElementById("id").getContext("2d");
+
+        // クリア
+        context.clearRect(0, 0, 1000, 2000);
+
+        // n * n マスを描画
+        for(var i = 0; i < n; i++){
+            for(var j = 0; j < n; j++){
+                drawRect(context, n, i, j, grid[j][i], "skyblue");
+            }
+        }
+
+        // 壁を描画(縦の壁)
+        console.log(verticalWall);
+        for(var i = 0; i < n - 1; i++){
+            for(var j = 0; j < n; j++){
+                if(verticalWall[i][j] == 1){
+                    drawVerticalWall(context, n, i, j);
+                }
+            }
+        }        
+
+        // 壁を描画(横の壁)
+        for(var i = 0; i < n; i++){
+            for(var j = 0; j < n - 1; j++){
+                if(horizontalWall[i][j] == 1){
+                    drawHorizontalWall(context, n, i, j);
+                }
+            }
+        }
+
+        // 高橋くんのマスを赤くする
+        drawRect(context, n, takahashiX, takahashiY, grid[takahashiX][takahashiY], "red");
+
+        // 青木くんのマスを青くする
+        drawRect(context, n, aokiX, aokiY, grid[aokiX][aokiY], "blue");
+
+        // 高橋くんと青木くんが同じマスにいる場合
+        if(takahashiX == aokiX && takahashiY == aokiY){
+            drawRect(context, n, takahashiX, takahashiY, grid[takahashiX][takahashiY], "purple");
+        }
+
+    }
+</script>
+<body onload="">
+    <canvas id="id" width="500" height="500"></canvas>
+    <footer>
+        <label for="nValue" style="background-color:lightgray">n(グリッドの1辺)の値</label>
+        <span id="nValue" style="font-weight:bold; background-color:lightgray">---</span>
+        <label for="point" style="background-color:lightgray">点数</label>
+        <span id="point" style="font-weight:bold; background-color:lightgray">---</span>
+    </footer>
+    <footer>
+        <label for="textarea">初期盤面(in.txt)</label>
+        <textarea label="textarea" type="text" id="board" value="" onchange="loadGrid()"></textarea>
+        <label for="textarea">操作(out.txt)</label>
+        <textarea label="textarea" type="text" id="operation" value="" onchange="loadOperation()"></textarea>
+        <br>
+        <label for="turnValue">ターン数</label>
+        <input label="turn" 
+            type="number" 
+            id="turnValue" 
+            placeholder="0"
+            min="0"
+            aria-valuemin="0"
+            max="100"
+            aria-valuemax="100"
+        onchange="changeTurn()">
+    </footer>
+</body>
