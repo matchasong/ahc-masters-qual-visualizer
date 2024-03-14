@@ -47,7 +47,7 @@
         horizontalWall = new Array(n);
         for(var i = 0; i < n; i++){
             horizontalWall[i] = new Array(n - 1);
-            var horizontalWallLine = gridLines[i + n + 2]
+            var horizontalWallLine = gridLines[i + n + 1]
             for(var j = 0; j < n - 1; j++){
                 horizontalWall[i][j] = parseInt(horizontalWallLine[j])
             }
@@ -86,17 +86,17 @@
         ctx.closePath();
     }
 
-    function drawVerticalWall(ctx, n, column, row){
+    function drawVerticalWall(ctx, n, row, column){
         ctx.fillStyle = "brown";
         ctx.beginPath();
         ctx.fillRect((column + 1) * (500 / n) - (500 / n) * 0.1, row * (500 / n), (500 / n) * 0.1, (500 / n));
         ctx.closePath();
     }
 
-    function drawHorizontalWall(ctx, n, x, y){
+    function drawHorizontalWall(ctx, n, row, column){
         ctx.fillStyle = "black";
         ctx.beginPath();
-        ctx.fillRect(x * (500 / n), (y + 1) * (500 / n) - (500 / n) * 0.1, (500 / n), (500 / n) * 0.1);
+        ctx.fillRect(column * (500 / n), (row + 1) * (500 / n) - (500 / n) * 0.1, (500 / n), (500 / n) * 0.1);
         ctx.closePath();
     }
 
@@ -186,7 +186,7 @@
         for(var i = 0; i < n - 1; i++){
             for(var j = 0; j < n; j++){
                 if(verticalWall[i][j] == 1){
-                    drawVerticalWall(context, n, j, i);
+                    drawVerticalWall(context, n, i, j);
                 }
             }
         }        
