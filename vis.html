@@ -10,6 +10,7 @@
     var grid = NaN;
     var verticalWall = NaN;
     var horizontalWall = NaN;
+    var isSwapped = false;
     
     function loadGrid(){
         // グリッドの値を取得
@@ -74,8 +75,14 @@
         aokiY = parseInt(commandList[3]);        
     }
 
-    function drawRect(ctx, n, x, y, text, color){
-        ctx.fillStyle = color || "black";
+    function drawRect(ctx, n, x, y, text, color, isSwapped = false){
+
+        if(isSwapped){
+            ctx.fillStyle = "orange";
+        } else {
+            ctx.fillStyle = color || "black";
+        }
+        
         ctx.beginPath();
         ctx.fillRect(y * (500 / n), x * (500 / n), (500 / n) * 0.9, (500 / n) * 0.9);
         ctx.closePath();
@@ -139,6 +146,12 @@
             w = grid[takahashiY][takahashiX];
             grid[takahashiY][takahashiX] = grid[aokiY][aokiX];
             grid[aokiY][aokiX] = w;
+
+            // swapフラグの更新
+            isSwapped = true;
+        } else {
+            // swapフラグの更新
+            isSwapped = false;
         }
 
         var takahashiMove = line[1];
@@ -168,7 +181,33 @@
 
     }
 
+    function calculatePoint() {
+        var point = 0;
+        for (var row = 0; row < n; row++) {
+            for (var column = 0; column < n; column++) {
+                // 右のマスとの差を加算
+                if (column < n - 1 && horizontalWall[row][column] == 0) {
+                    point += Math.abs(grid[row][column] - grid[row][column + 1]);
+                }
+                // 下のマスとの差を加算
+                if (row < n - 1 && verticalWall[row][column] == 0) {
+                    point += Math.abs(grid[row][column] - grid[row + 1][column]);
+                }
+                // 左のマスとの差を加算
+                if (column > 0 && horizontalWall[row][column - 1] == 0) {
+                    point += Math.abs(grid[row][column] - grid[row][column - 1]);
+                }
+                // 上のマスとの差を加算
+                if (row > 0 && verticalWall[row - 1][column] == 0) {
+                    point += Math.abs(grid[row][column] - grid[row - 1][column]);
+                }
+            }
+        }
+        return point;
+    }
+
     function visualize(){
+        console.log("visualize start" + isSwapped);
         context = document.getElementById("id").getContext("2d");
 
         // クリア
@@ -201,14 +240,21 @@
         }
 
         // 高橋くんのマスを赤くする
-        drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "red");
+        console.log("before paint" + isSwapped);
+        drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "red", isSwapped);
 
         // 青木くんのマスを青くする
-        drawRect(context, n, aokiY, aokiX, grid[aokiY][aokiX], "blue");
+        drawRect(context, n, aokiY, aokiX, grid[aokiY][aokiX], "blue", isSwapped);
 
         // 高橋くんと青木くんが同じマスにいる場合
         if(takahashiX == aokiX && takahashiY == aokiY){
             drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "purple");
+        }
+
+        // 点数を表示
+        document.getElementById("point").innerHTML = calculatePoint();
+        if(currentTurn == 0){
+            document.getElementById("initialPoint").innerHTML = calculatePoint();
         }
 
     }
@@ -218,7 +264,9 @@
     <footer>
         <label for="nValue" style="background-color:lightgray">n(グリッドの1辺)の値</label>
         <span id="nValue" style="font-weight:bold; background-color:lightgray">---</span>
-        <label for="point" style="background-color:lightgray">点数</label>
+        <label for="initialPoint" style="background-color:lightgray">初期コスト</label>
+        <span id="initialPoint" style="font-weight:bold; background-color:lightgray">---</span>
+        <label for="point" style="background-color:lightgray">コスト</label>
         <span id="point" style="font-weight:bold; background-color:lightgray">---</span>
     </footer>
     <footer>
