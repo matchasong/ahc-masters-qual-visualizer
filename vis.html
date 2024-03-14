@@ -28,7 +28,6 @@
         
         for(var i = 2 * n; i < 3 * n; i++){
             for(var j = 0; j < n; j++){
-
                 var gridLine = gridLines[i].split(" ");
                 grid[i - 2 * n][j] = parseInt(gridLine[j]);
             }
@@ -78,19 +77,19 @@
     function drawRect(ctx, n, x, y, text, color){
         ctx.fillStyle = color || "black";
         ctx.beginPath();
-        ctx.fillRect(x * (500 / n), y * (500 / n), (500 / n) * 0.9, (500 / n) * 0.9);
+        ctx.fillRect(y * (500 / n), x * (500 / n), (500 / n) * 0.9, (500 / n) * 0.9);
         ctx.closePath();
         ctx.beginPath();
         ctx.font = (500 / n) * 0.3 + 'px Roboto medium';
         ctx.fillStyle = 'black';
-        ctx.fillText(text, x * (500 / n) + (500 / n) * 0.3, y * (500 / n) + (500 / n / 2));
+        ctx.fillText(text, y * (500 / n) + (500 / n) * 0.3, x * (500 / n) + (500 / n / 2));
         ctx.closePath();
     }
 
-    function drawVerticalWall(ctx, n, x, y){
+    function drawVerticalWall(ctx, n, column, row){
         ctx.fillStyle = "brown";
         ctx.beginPath();
-        ctx.fillRect((x + 1) * (500 / n) - (500 / n) * 0.1, y * (500 / n), (500 / n) * 0.1, (500 / n));
+        ctx.fillRect((column + 1) * (500 / n) - (500 / n) * 0.1, row * (500 / n), (500 / n) * 0.1, (500 / n));
         ctx.closePath();
     }
 
@@ -178,7 +177,7 @@
         // n * n マスを描画
         for(var i = 0; i < n; i++){
             for(var j = 0; j < n; j++){
-                drawRect(context, n, i, j, grid[j][i], "skyblue");
+                drawRect(context, n, i, j, grid[i][j], "skyblue");
             }
         }
 
@@ -187,7 +186,7 @@
         for(var i = 0; i < n - 1; i++){
             for(var j = 0; j < n; j++){
                 if(verticalWall[i][j] == 1){
-                    drawVerticalWall(context, n, i, j);
+                    drawVerticalWall(context, n, j, i);
                 }
             }
         }        
@@ -202,14 +201,14 @@
         }
 
         // 高橋くんのマスを赤くする
-        drawRect(context, n, takahashiX, takahashiY, grid[takahashiX][takahashiY], "red");
+        drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "red");
 
         // 青木くんのマスを青くする
-        drawRect(context, n, aokiX, aokiY, grid[aokiX][aokiY], "blue");
+        drawRect(context, n, aokiY, aokiX, grid[aokiY][aokiX], "blue");
 
         // 高橋くんと青木くんが同じマスにいる場合
         if(takahashiX == aokiX && takahashiY == aokiY){
-            drawRect(context, n, takahashiX, takahashiY, grid[takahashiX][takahashiY], "purple");
+            drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "purple");
         }
 
     }
