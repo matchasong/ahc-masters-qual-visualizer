@@ -136,9 +136,9 @@
         var direction = line[0];
         if(direction == "1"){
             // swap
-            w = grid[takahashiX][takahashiY];
-            grid[takahashiX][takahashiY] = grid[aokiX][aokiY];
-            grid[aokiX][aokiY] = w;
+            w = grid[takahashiY][takahashiX];
+            grid[takahashiY][takahashiX] = grid[aokiY][aokiX];
+            grid[aokiY][aokiX] = w;
         }
 
         var takahashiMove = line[1];
