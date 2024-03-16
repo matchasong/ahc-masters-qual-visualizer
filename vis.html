@@ -11,6 +11,8 @@
     var verticalWall = NaN;
     var horizontalWall = NaN;
     var isSwapped = false;
+    var initialPoint = 0;
+    var totalPoint = 0;
     
     function loadGrid(){
         // グリッドの値を取得
@@ -64,6 +66,9 @@
         setInitialPosition(operationLines.split("\n")[0]);
         document.getElementById("turnValue").value = "0";
         visualize();
+
+        // ターン数の入力フィールドにフォーカスを当てる
+        document.getElementById('turnValue').focus();
     }
 
     function setInitialPosition(command){
@@ -187,23 +192,30 @@
             for (var column = 0; column < n; column++) {
                 // 右のマスとの差を加算
                 if (column < n - 1 && horizontalWall[row][column] == 0) {
-                    point += Math.abs(grid[row][column] - grid[row][column + 1]);
+                    point += Math.abs(grid[row][column] ** 2 - grid[row][column + 1] ** 2);
                 }
                 // 下のマスとの差を加算
                 if (row < n - 1 && verticalWall[row][column] == 0) {
-                    point += Math.abs(grid[row][column] - grid[row + 1][column]);
+                    point += Math.abs(grid[row][column] ** 2 - grid[row + 1][column] ** 2);
                 }
+
+                // TODO 2回足してしまっている
                 // 左のマスとの差を加算
                 if (column > 0 && horizontalWall[row][column - 1] == 0) {
-                    point += Math.abs(grid[row][column] - grid[row][column - 1]);
+                    point += Math.abs(grid[row][column] ** 2 - grid[row][column - 1] ** 2);
                 }
                 // 上のマスとの差を加算
                 if (row > 0 && verticalWall[row - 1][column] == 0) {
-                    point += Math.abs(grid[row][column] - grid[row - 1][column]);
+                    point += Math.abs(grid[row][column] ** 2 - grid[row - 1][column] ** 2);
                 }
             }
         }
         return point;
+    }
+
+    function calculateTotalPoint(){
+        totalPoint = Math.max(1, Math.floor(10 ** 6 * Math.log2(initialPoint / currentPoint)));
+        return totalPoint
     }
 
     function visualize(){
@@ -252,12 +264,17 @@
         }
 
         // 点数を表示
-        document.getElementById("point").innerHTML = calculatePoint();
+        currentPoint = calculatePoint();
+        document.getElementById("point").innerHTML = currentPoint;
         if(currentTurn == 0){
-            document.getElementById("initialPoint").innerHTML = calculatePoint();
+            initialPoint = calculatePoint();
+            document.getElementById("initialPoint").innerHTML = initialPoint;
         }
+        totalPoint = calculateTotalPoint();
+        document.getElementById("totalPoint").innerHTML = totalPoint;
 
     }
+
 </script>
 <body onload="">
     <canvas id="id" width="500" height="500"></canvas>
@@ -268,6 +285,8 @@
         <span id="initialPoint" style="font-weight:bold; background-color:lightgray">---</span>
         <label for="point" style="background-color:lightgray">コスト</label>
         <span id="point" style="font-weight:bold; background-color:lightgray">---</span>
+        <label for="totalPoint" style="background-color:lightgray">得点</label>
+        <span id="totalPoint" style="font-weight:bold; background-color:lightgray">---</span>
     </footer>
     <footer>
         <label for="textarea">初期盤面(in.txt)</label>
