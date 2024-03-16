@@ -65,6 +65,7 @@
         currentTurn = 0;
         setInitialPosition(operationLines.split("\n")[0]);
         document.getElementById("turnValue").value = "0";
+        document.getElementById("turnValue").max = 4 * n ** 2;
         visualize();
 
         // ターン数の入力フィールドにフォーカスを当てる
@@ -192,21 +193,19 @@
             for (var column = 0; column < n; column++) {
                 // 右のマスとの差を加算
                 if (column < n - 1 && horizontalWall[row][column] == 0) {
-                    point += Math.abs(grid[row][column] ** 2 - grid[row][column + 1] ** 2);
+                    point += (grid[row][column] - grid[row][column + 1]) ** 2;
                 }
                 // 下のマスとの差を加算
                 if (row < n - 1 && verticalWall[row][column] == 0) {
-                    point += Math.abs(grid[row][column] ** 2 - grid[row + 1][column] ** 2);
+                    point += (grid[row][column] - grid[row + 1][column]) ** 2;
                 }
-
-                // TODO 2回足してしまっている
                 // 左のマスとの差を加算
-                if (column > 0 && horizontalWall[row][column - 1] == 0) {
-                    point += Math.abs(grid[row][column] ** 2 - grid[row][column - 1] ** 2);
+                 if (column > 0 && horizontalWall[row][column - 1] == 0) {
+                    point += (grid[row][column]- grid[row][column - 1]) ** 2 ;
                 }
                 // 上のマスとの差を加算
                 if (row > 0 && verticalWall[row - 1][column] == 0) {
-                    point += Math.abs(grid[row][column] ** 2 - grid[row - 1][column] ** 2);
+                    point += (grid[row][column] - grid[row - 1][column]) ** 2 ;
                 }
             }
         }
