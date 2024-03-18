@@ -41,17 +41,17 @@
         for(var i = 0; i < n; i++){
             verticalWall[i] = new Array(n - 2);
             var verticalWallLine = gridLines[i + 1]
-            for(var j = 0; j < n; j++){
+            for(var j = 0; j < n - 1; j++){
                 verticalWall[i][j] = parseInt(verticalWallLine[j])
             }
         }
 
         // 壁を取得(壁あり:1)
         horizontalWall = new Array(n - 2);
-        for(var i = 0; i < n; i++){
+        for(var i = 0; i < n - 1; i++){
             horizontalWall[i] = new Array(n - 1);
             var horizontalWallLine = gridLines[i + n + 1]
-            for(var j = 0; j < n - 1; j++){
+            for(var j = 0; j < n; j++){
                 horizontalWall[i][j] = parseInt(horizontalWallLine[j])
             }
         }
@@ -226,8 +226,8 @@
 
         // 壁を描画(縦の壁)
         console.log(verticalWall);
-        for(var i = 0; i < n - 1; i++){
-            for(var j = 0; j < n; j++){
+        for(var i = 0; i < n; i++){
+            for(var j = 0; j < n - 1; j++){
                 if(verticalWall[i][j] == 1){
                     drawVerticalWall(context, n, i, j);
                 }
@@ -235,8 +235,9 @@
         }        
 
         // 壁を描画(横の壁)
-        for(var i = 0; i < n; i++){
-            for(var j = 0; j < n - 1; j++){
+        console.log(horizontalWall);
+        for(var i = 0; i < n - 1; i++){
+            for(var j = 0; j < n; j++){
                 if(horizontalWall[i][j] == 1){
                     drawHorizontalWall(context, n, i, j);
                 }
@@ -244,7 +245,6 @@
         }
 
         // 高橋くんのマスを赤くする
-        console.log("before paint" + isSwapped);
         drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "red", isSwapped);
 
         // 青木くんのマスを青くする
