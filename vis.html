@@ -77,14 +77,56 @@
         aokiY = parseInt(commandList[3]);        
     }
 
-    function drawRect(ctx, n, x, y, text, color, isSwapped = false){
+    function getHexString(intensity){
+         // 16進数に変換
+         var hexString = intensity.toString(16);
+    
+         // 1桁の場合は前に0を追加
+         if (hexString.length < 2) {
+            hexString = "0" + hexString;
+         }
 
+         return hexString;
+    }
+
+    function getGreenColorCode(intensity) {
+        // 0からn ** 2の範囲を0から255の範囲にマッピング
+        intensity = n ** 2 - intensity; // 濃淡を逆転させる(小さい数字を薄い色にする)
+        var blueIntensity = Math.round((intensity / (n ** 2)) * 150 + 100);
+        var greenIntensity = Math.round((intensity / (n ** 2)) * 100 + 150);
+        var redIntensity = Math.round((intensity / (n ** 2)) * 80);
+
+        var blue = getHexString(blueIntensity);
+        var green = getHexString(greenIntensity);
+        var red = getHexString(redIntensity);
+    
+        // カラーコードを生成
+        var colorCode = "#" + blue + green + red;
+    
+        return colorCode;
+    }
+
+    function drawCell(ctx, n, x, y, text, people, isSwapped = false){
+
+        // マス目の色を設定する
+        if(people == ""){
+            color = getGreenColorCode(grid[x][y]);
+        } else if(people == "takahashi"){
+            color = "red";
+        } else if(people == "aoki"){
+            color = "blue";
+        } else if(people == "both"){
+            color = "purple";
+        }
+
+        // スワップが起きたターンはマス色をオレンジにする
         if(isSwapped){
             ctx.fillStyle = "orange";
         } else {
             ctx.fillStyle = color || "black";
         }
         
+        // マスを描画
         ctx.beginPath();
         ctx.fillRect(y * (500 / n), x * (500 / n), (500 / n) * 0.9, (500 / n) * 0.9);
         ctx.closePath();
@@ -96,7 +138,7 @@
     }
 
     function drawVerticalWall(ctx, n, row, column){
-        ctx.fillStyle = "brown";
+        ctx.fillStyle = "black";
         ctx.beginPath();
         ctx.fillRect((column + 1) * (500 / n) - (500 / n) * 0.1, row * (500 / n), (500 / n) * 0.1, (500 / n));
         ctx.closePath();
@@ -216,7 +258,7 @@
         // n * n マスを描画
         for(var i = 0; i < n; i++){
             for(var j = 0; j < n; j++){
-                drawRect(context, n, i, j, grid[i][j], "skyblue");
+                drawCell(context, n, i, j, grid[i][j], "");
             }
         }
 
@@ -239,14 +281,14 @@
         }
 
         // 高橋くんのマスを赤くする
-        drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "red", isSwapped);
+        drawCell(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "takahashi", isSwapped);
 
         // 青木くんのマスを青くする
-        drawRect(context, n, aokiY, aokiX, grid[aokiY][aokiX], "blue", isSwapped);
+        drawCell(context, n, aokiY, aokiX, grid[aokiY][aokiX], "aoki", isSwapped);
 
         // 高橋くんと青木くんが同じマスにいる場合
         if(takahashiX == aokiX && takahashiY == aokiY){
-            drawRect(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "purple");
+            drawCell(context, n, takahashiY, takahashiX, grid[takahashiY][takahashiX], "both");
         }
 
         // 点数を表示
