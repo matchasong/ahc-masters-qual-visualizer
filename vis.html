@@ -206,7 +206,7 @@
     }
 
     function calculateTotalPoint(){
-        totalPoint = Math.max(1, Math.floor(10 ** 6 * Math.log2(initialPoint / currentPoint)));
+        totalPoint = Math.max(1, Math.round(10 ** 6 * Math.log2(initialPoint / currentPoint)));
         return totalPoint
     }
 
