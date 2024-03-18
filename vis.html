@@ -38,8 +38,8 @@
 
         // 壁を取得(壁あり:1)
         verticalWall = new Array(n - 1);
-        for(var i = 0; i < n - 1; i++){
-            verticalWall[i] = new Array(n);
+        for(var i = 0; i < n; i++){
+            verticalWall[i] = new Array(n - 2);
             var verticalWallLine = gridLines[i + 1]
             for(var j = 0; j < n; j++){
                 verticalWall[i][j] = parseInt(verticalWallLine[j])
@@ -47,7 +47,7 @@
         }
 
         // 壁を取得(壁あり:1)
-        horizontalWall = new Array(n);
+        horizontalWall = new Array(n - 2);
         for(var i = 0; i < n; i++){
             horizontalWall[i] = new Array(n - 1);
             var horizontalWallLine = gridLines[i + n + 1]
@@ -73,7 +73,6 @@
     }
 
     function setInitialPosition(command){
-        console.log(command);
         commandList = command.split(" ");
         takahashiX = parseInt(commandList[0]);
         takahashiY = parseInt(commandList[1]);
@@ -137,9 +136,6 @@
     }
 
     function incrementTurn(){
-        console.log(takahashiX, takahashiY);
-        console.log(currentTurn);
-        console.log(operationLines);
         currentTurn += 1;
         document.getElementById("turnValue").value = currentTurn;
 
@@ -182,9 +178,6 @@
             aokiX += 1;
         }
 
-        console.log(operationLine);
-        console.log(takahashiX, takahashiY);
-
     }
 
     function calculatePoint() {
@@ -192,24 +185,24 @@
         for (var row = 0; row < n; row++) {
             for (var column = 0; column < n; column++) {
                 // 右のマスとの差を加算
-                if (column < n - 1 && horizontalWall[row][column] == 0) {
+                if (column < n - 1 && verticalWall[row][column] == 0) {
                     point += (grid[row][column] - grid[row][column + 1]) ** 2;
                 }
                 // 下のマスとの差を加算
-                if (row < n - 1 && verticalWall[row][column] == 0) {
+                if (row < n - 1 && horizontalWall[row][column] == 0) {
                     point += (grid[row][column] - grid[row + 1][column]) ** 2;
                 }
                 // 左のマスとの差を加算
-                 if (column > 0 && horizontalWall[row][column - 1] == 0) {
-                    point += (grid[row][column]- grid[row][column - 1]) ** 2 ;
+                 if (column > 0 && verticalWall[row][column - 1] == 0) {
+                    point += (grid[row][column] - grid[row][column - 1]) ** 2 ;
                 }
                 // 上のマスとの差を加算
-                if (row > 0 && verticalWall[row - 1][column] == 0) {
+                if (row > 0 && horizontalWall[row - 1][column] == 0) {
                     point += (grid[row][column] - grid[row - 1][column]) ** 2 ;
                 }
             }
         }
-        return point;
+        return point / 2;
     }
 
     function calculateTotalPoint(){
