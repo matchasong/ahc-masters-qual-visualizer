@@ -71,10 +71,10 @@
 
     function setInitialPosition(command){
         commandList = command.split(" ");
-        takahashiX = parseInt(commandList[0]);
-        takahashiY = parseInt(commandList[1]);
-        aokiX = parseInt(commandList[2]);
-        aokiY = parseInt(commandList[3]);        
+        takahashiX = parseInt(commandList[1]);
+        takahashiY = parseInt(commandList[0]);
+        aokiX = parseInt(commandList[3]);
+        aokiY = parseInt(commandList[2]);        
     }
 
     function getHexString(intensity){
@@ -201,7 +201,13 @@
         }else if(takahashiMove == "D"){
             takahashiY += 1;
         }else if(takahashiMove == "L"){
-            takahashiX -= 1;
+            if(takahashiX <= 0){
+                console.log("ターン:" + currentTurn +" 高橋くんがj<0です");
+            } else if(verticalWall[takahashiY][takahashiX - 1] == 1){
+                console.log("ターン:" + currentTurn + " 高橋くんは(" + takahashiY + "," + takahashiX + ")から(" + takahashiY + "," + takahashiX - 1 + "に移動する際に壁にぶつかりました");
+            } else {
+                takahashiX -= 1;
+            }
         }else if(takahashiMove == "R"){
             takahashiX += 1;
         }
@@ -212,7 +218,14 @@
         }else if(aokiMove == "D"){
             aokiY += 1;
         }else if(aokiMove == "L"){
-            aokiX -= 1;
+            if(aokiX <= 0){
+                console.log("ターン:" + currentTurn +" 青木くんがj<0です");
+            } else if(verticalWall[aokiY][aokiX - 1] == 1){
+                console.log("ターン:" + currentTurn + " 青木くんは(" + aokiY + "," + aokiX + ")から(" + aokiY + "," + aokiX - 1 + "に移動する際に壁にぶつかりました");
+            } else {
+                aokiX -= 1;
+            }
+           
         }else if(aokiMove == "R"){
             aokiX += 1;
         }
