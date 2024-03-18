@@ -67,9 +67,6 @@
         document.getElementById("turnValue").value = "0";
         document.getElementById("turnValue").max = 4 * n ** 2;
         visualize();
-
-        // ターン数の入力フィールドにフォーカスを当てる
-        document.getElementById('turnValue').focus();
     }
 
     function setInitialPosition(command){
@@ -211,7 +208,6 @@
     }
 
     function visualize(){
-        console.log("visualize start" + isSwapped);
         context = document.getElementById("id").getContext("2d");
 
         // クリア
@@ -225,7 +221,6 @@
         }
 
         // 壁を描画(縦の壁)
-        console.log(verticalWall);
         for(var i = 0; i < n; i++){
             for(var j = 0; j < n - 1; j++){
                 if(verticalWall[i][j] == 1){
@@ -235,7 +230,6 @@
         }        
 
         // 壁を描画(横の壁)
-        console.log(horizontalWall);
         for(var i = 0; i < n - 1; i++){
             for(var j = 0; j < n; j++){
                 if(horizontalWall[i][j] == 1){
@@ -297,4 +291,24 @@
             aria-valuemax="100"
         onchange="changeTurn()">
     </footer>
+    <script>
+        function completeLoadGrid(){
+            // オペレーションの入力フィールドにフォーカスを当てる
+            document.getElementById('operation').focus();
+        }
+
+        function completeLoadOperation(){
+            // ターン数の入力フィールドにフォーカスを当てる
+            document.getElementById('turnValue').focus();
+        }
+
+        // 初期盤面と操作の入力フィールド
+        var initialBoardInput = document.getElementById('board');
+        var operationInput = document.getElementById('operation');
+
+        // 入力フィールドにイベントリスナーを追加
+        initialBoardInput.addEventListener('change', completeLoadGrid);
+        operationInput.addEventListener('change', completeLoadOperation);
+
+    </script>
 </body>
