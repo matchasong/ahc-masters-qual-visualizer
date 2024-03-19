@@ -207,7 +207,7 @@
         }else if(takahashiMove == "D"){
             if(takahashiY >= n - 1){
                 console.error("ターン:" + currentTurn +" 高橋くんがj>nです");
-            } else if(horizontalWall[takahashiY + 1][takahashiX] == 1){
+            } else if(horizontalWall[takahashiY][takahashiX] == 1){
                 console.error("ターン:" + currentTurn + " 高橋くんは(" + takahashiY + "," + takahashiX + ")から(" + (takahashiY + 1) + "," + takahashiX + ")に移動する際に壁にぶつかりました");
             } else {
                 takahashiY += 1;
@@ -242,7 +242,7 @@
         }else if(aokiMove == "D"){
             if(aokiY >= n - 1){
                 console.error("ターン:" + currentTurn +" 青木くんがi>nです");
-            } else if(horizontalWall[aokiY + 1][aokiX] == 1){
+            } else if(horizontalWall[aokiY][aokiX] == 1){
                 console.error("ターン:" + currentTurn + " 青木くんは(" + aokiY + "," + aokiX + ")から(" + (aokiY + 1) + "," + aokiX + ")に移動する際に壁にぶつかりました");
             } else {
                 aokiY += 1;
